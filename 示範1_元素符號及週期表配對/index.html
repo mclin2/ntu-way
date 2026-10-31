@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#174d4b">
+  <title>元素符號及週期表對對碰｜元素研究室</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+<!-- 大冒險入口：原遊戲程式保持不變 -->
+<nav aria-label="冒險地圖導覽" style="position:relative;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:10px 20px;background:#fff9ea;color:#193c45;font:14px 'Microsoft JhengHei',sans-serif;border-bottom:1px solid #c7d5c5"><a href="../大冒險地圖/index.html" style="display:inline-block;text-decoration:none;color:#193c45;border:1px solid #8ca88d;border-radius:10px;padding:9px 14px;font-weight:bold">← 回到大地圖</a><span id="adventure-cert-status" role="status" aria-live="polite">完成本關，收集元素之印</span></nav>
+
+  <main class="app">
+    <header class="hero">
+      <div class="eyebrow">CHEMISTRY LAB · 元素研究室</div>
+      <h1>元素符號及週期表<span>對對碰</span></h1>
+      <p>展開元素卷軸，為每一個符號找到它的位置。</p>
+      <span class="edition">高中化學 · 118 元素</span>
+    </header>
+    <section class="toolbar" aria-label="遊戲設定">
+      <label>練習範圍 <select id="scope" aria-label="練習範圍"></select></label>
+      <div class="goal" id="goal"></div>
+      <button id="restart" class="primary">重新開始</button>
+      <button id="help" aria-expanded="false" aria-controls="instructions">玩法說明</button>
+    </section>
+    <section id="instructions" class="instructions" hidden>
+      <strong>把右側卷軸拖到左側對應的原子序格。</strong>也可先點選卷軸，再點選格子；鍵盤用 Tab 移動、Enter 選取。答對蓋紅章並鎖定，答錯卷軸退回。手機上可橫向滑動週期表；拖到表格邊緣可自動捲動。
+      <p>本遊戲使用傳統 A／B 族標示：1、2、13–18 族為 A 族；3–12 族為 B 族，包含第 12 族。第 3 族採 La、Ac 排法，其餘鑭系與錒系另列，亦可額外挑戰。完整挑戰需 A 族 50 個全部完成，且 B 族至少完成 10 個；單族／單週期練習需完成所選全部元素。</p>
+    </section>
+    <section class="stats" aria-label="配對進度">
+      <div><span>A 族研究</span><strong id="a-count">0 / 50</strong><progress id="a-progress" max="50" value="0"></progress></div>
+      <div><span>B 族研究</span><strong id="b-count">0 / 10</strong><progress id="b-progress" max="10" value="0"></progress></div>
+      <div><span>已配對元素</span><strong id="total-count">0 / 118</strong><span id="accuracy">準備開始探索</span></div>
+    </section>
+    <div class="play-area">
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><small>01 · 尋找元素座標</small><h2>週期表實驗板</h2></div><span class="tag">格內數字＝原子序</span></div>
+        <div class="legend"><span class="a-key">A 族</span><span class="b-key">B 族</span><span class="f-key">鑭系／錒系</span><span>淡色格不在本次範圍</span></div>
+        <div class="table-scroll" id="table-scroll" tabindex="0" aria-label="週期表，可左右捲動"><div id="periodic-table" class="periodic-table"></div></div>
+        <div id="feedback" class="feedback" role="status" aria-live="polite">從右側選一張卷軸，開始配對吧！</div>
+      </section>
+      <aside class="panel bank-panel">
+        <div class="panel-heading"><div><small>02 · 展開你的發現</small><h2>元素卷軸</h2></div><span id="remaining" class="tag"></span></div>
+        <label class="search-label" for="search">尋找符號 <input id="search" type="search" placeholder="例如 Na、Fe" autocomplete="off" spellcheck="false"></label>
+        <div class="bank-tools"><span>隨機排列 · 拖曳或點選</span><button id="shuffle" class="text-button">重新洗牌</button></div>
+        <div id="cards" class="cards" aria-label="待配對的元素符號"></div>
+        <p id="empty-bank" hidden>沒有符合的卷軸，請調整搜尋文字。</p>
+      </aside>
+    </div>
+    <footer>每一次配對，都是一次發現。<span>ELEMENT DISCOVERY / 化學探索實驗</span></footer>
+  </main>
+  <dialog id="win"><div class="win-seal">通關</div><small>EXPERIMENT COMPLETE</small><h2>元素研究任務完成！</h2><p id="win-detail"></p><div class="dialog-actions"><button id="continue" class="primary">繼續探索</button><button id="play-again">再挑戰一次</button></div></dialog>
+
+<script>
+/* 僅監看原遊戲的通關畫面，不更動原遊戲及其既有儲存邏輯。 */
+(()=>{const key='cert_dynasty',name='元素之印',status=document.getElementById('adventure-cert-status');let awarded=false;function check(){if(awarded||!(document.getElementById('win')?.open))return;try{localStorage.setItem(key,'true');awarded=true;status.textContent='✓ 已取得'+name+'！可返回大地圖。'}catch{status.textContent='已通關；瀏覽器未允許儲存憑證，請開啟本機儲存權限。'}}try{if(!localStorage.getItem('adventure_start'))localStorage.setItem('adventure_start',Date.now().toString());if(localStorage.getItem(key))status.textContent='✓ 已持有'+name;}catch{}new MutationObserver(check).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','open'],childList:true,characterData:true});check();})();
+</script>
+</body>
+</html>

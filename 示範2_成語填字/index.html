@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#313a36"><title>墨香書齋｜成語填字</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- 大冒險入口：原遊戲程式保持不變 -->
+<nav aria-label="冒險地圖導覽" style="position:relative;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:10px 20px;background:#fff9ea;color:#193c45;font:14px 'Microsoft JhengHei',sans-serif;border-bottom:1px solid #c7d5c5"><a href="../大冒險地圖/index.html" style="display:inline-block;text-decoration:none;color:#193c45;border:1px solid #8ca88d;border-radius:10px;padding:9px 14px;font-weight:bold">← 回到大地圖</a><span id="adventure-cert-status" role="status" aria-live="polite">完成本關，收集成語之印</span></nav>
+
+<div class="scene" aria-hidden="true"></div>
+<main class="app">
+<header class="masthead"><div class="brand"><span class="brand-mark">墨</span><div>墨香書齋<small>成語修習所 · 國中篇</small></div></div><button id="restart" class="text-button">重新開始</button></header>
+<section class="heading"><p class="eyebrow">拾字成句，落筆成章</p><h1>成語填字</h1><p class="subtitle">把散落的文字，拼回千年的智慧。</p></section>
+<section id="play" aria-label="成語挑戰">
+<div class="status"><span>修習進度 <b id="progress-label">01 / 10</b></span><span>得分 <b id="score">0</b><small> / 100</small></span></div>
+<div id="progress" class="progress" aria-label="修習進度"></div>
+<article class="scroll-panel">
+<div class="question-meta"><span id="question-label">第 一 題</span><span>每題二字 · 共十題</span></div>
+<p class="instruction">將下方字卡拖入米字格</p>
+<div id="slots" class="slots" aria-label="成語填空"></div>
+<p id="feedback" class="feedback" role="status" aria-live="polite">也可以先點字卡，再點空格。</p>
+<div id="reveal" class="reveal" hidden><p class="reveal-label">成語小箋</p><h2 id="full-word"></h2><p id="meaning"></p></div>
+<div id="clue" class="clue"><span>字義線索</span><p id="clue-text"></p></div>
+<button id="next" class="primary" hidden>收好這句，下一題 <span aria-hidden="true">→</span></button>
+</article>
+<section class="tray" aria-label="可選字卡"><div class="tray-heading"><h2>拾字盤</h2><span>挑兩字，成一句</span></div><div id="cards" class="cards"></div></section>
+<p class="scoring-note">每格首次答對得 5 分；答錯可重試，該格不再計分。</p>
+</section>
+<section id="result" class="result" hidden aria-label="修習成績"><span class="eyebrow">十句成語，一卷收穫</span><h2>今日修習完成</h2><div class="final-score"><b id="final-score">100</b><span>分 / 100</span></div><p id="result-message"></p><div id="summary" class="summary"></div><button id="again" class="primary">再開一卷 · 重新挑戰</button><details><summary>回顧本次成語與解釋</summary><ol id="review"></ol></details></section>
+<footer><img src="assets/images/treasures.png" alt="水墨風文房四寶" width="120" height="100"><div>慢慢想，每一字都有意思。<small>五十個常見成語 · 每回隨機十題</small></div><span class="footer-seal">學<br>以致用</span></footer>
+</main>
+<script src="data.js"></script><script src="game.js"></script>
+
+<script>
+/* 僅監看原遊戲的通關畫面，不更動原遊戲及其既有儲存邏輯。 */
+(()=>{const key='cert_idiom',name='成語之印',status=document.getElementById('adventure-cert-status');let awarded=false;function check(){if(awarded||!(document.getElementById('result') && !document.getElementById('result').hidden))return;try{localStorage.setItem(key,'true');awarded=true;status.textContent='✓ 已取得'+name+'！可返回大地圖。'}catch{status.textContent='已通關；瀏覽器未允許儲存憑證，請開啟本機儲存權限。'}}try{if(!localStorage.getItem('adventure_start'))localStorage.setItem('adventure_start',Date.now().toString());if(localStorage.getItem(key))status.textContent='✓ 已持有'+name;}catch{}new MutationObserver(check).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','open'],childList:true,characterData:true});check();})();
+</script>
+</body></html>

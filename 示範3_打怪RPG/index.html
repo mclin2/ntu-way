@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>化學魔法森｜學測打怪 RPG</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- 大冒險入口：原遊戲程式保持不變 -->
+<nav aria-label="冒險地圖導覽" style="position:relative;z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:10px 20px;background:#fff9ea;color:#193c45;font:14px 'Microsoft JhengHei',sans-serif;border-bottom:1px solid #c7d5c5"><a href="../大冒險地圖/index.html" style="display:inline-block;text-decoration:none;color:#193c45;border:1px solid #8ca88d;border-radius:10px;padding:9px 14px;font-weight:bold">← 回到大地圖</a><span id="adventure-cert-status" role="status" aria-live="polite">完成本關，收集學測勇者之印</span></nav>
+
+<header><a class="brand" href="index.html">化學魔法森 <small>CHEMISTRY QUEST</small></a><span class="tag">萬聖節 · 30 題試煉</span></header>
+<main>
+<section id="intro" class="intro">
+ <div class="intro-copy"><span class="eyebrow">HALLOWEEN CHEMISTRY QUEST</span><h1>穿越森林，<br>成為學測魔法師。</h1><p>帶著 100 HP，走進南瓜燈照亮的魔法森林。<br>用化學知識，迎戰五位萬聖節守關者。</p><button class="primary" id="start">開始冒險 <span>→</span></button><p class="source">題庫：學測模擬試題_30題.pdf<br>原卷為高一基礎化學，供高三學測複習使用。</p></div>
+ <div class="intro-art"><img class="title-art" src="assets/title.png" alt="化學魔法森標題牌"><img class="hero-mage" src="assets/characters/mage.png" alt="戴南瓜紫帽與橘色披風的魔法師"><span class="art-note">30 QUESTIONS · 5 CHALLENGES</span></div>
+ <div class="rules"><article><b>01 / 施放知識</b><p>每關 6 題，答對造成傷害並獲得金幣；答錯受到反擊並揭曉正解。</p></article><article><b>02 / 補充裝備</b><p>每關結束造訪商店。藥水補血、水晶增傷、復活符自動救援。</p></article><article><b>03 / 完成試煉</b><p>每關答完 6 題即可前進；怪物若仍有血量會撤退。完成 30 題查看成績。</p></article></div>
+</section>
+<section id="adventure" hidden>
+ <nav id="route" class="route" aria-label="冒險進度"></nav>
+ <div class="status"><div><span class="eyebrow">魔法師生命</span><b id="hpText"></b><div class="bar"><i id="hpBar"></i></div></div><div class="stat"><small>金幣</small><b id="coins"></b></div><div class="stat"><small>魔法攻擊</small><b id="attack"></b></div><div class="stat"><small>復活符</small><b id="revives"></b></div></div>
+ <div class="game-grid"><section class="battle"><div class="battle-heading"><span id="chapter" class="eyebrow"></span><h2 id="monsterName"></h2><div class="monster-health"><span id="enemyText"></span><div class="bar enemy"><i id="enemyBar"></i></div></div></div><div class="actors"><figure><img src="assets/characters/mage.png" alt="魔法師"><figcaption>你的魔法師</figcaption></figure><span id="spell" aria-hidden="true">VS</span><figure><img id="monster" src="assets/characters/wolf.png" alt="野狼"><figcaption id="enemyCaption"></figcaption></figure></div><div id="battleNote" class="battle-note" aria-live="polite"></div></section>
+ <section class="question-card"><div class="question-top"><span class="eyebrow">知識試煉</span><span id="qProgress"></span></div><div class="progress"><i id="progress"></i></div><h2 id="question"></h2><div id="options"></div><div id="feedback" role="status" aria-live="polite" hidden></div><button id="next" class="primary" hidden>下一題 →</button></section></div>
+ <p class="keyboard-hint">電腦可用 1–4 選答案，Enter 前進；手機直接點選。</p>
+</section>
+<section id="shop" hidden><div class="shop-hero"><div><span class="eyebrow">森林補給站</span><h1>歇一下，再出發。</h1><p id="stageSummary"></p><p>目前持有 <b id="shopCoins"></b> 金幣 · HP <b id="shopHp"></b></p></div><img src="assets/backgrounds/shop.png" alt="森林裡溫暖的木造魔法商店"></div><div id="products" class="products"></div><p id="shopMessage" role="status"></p><button id="continue" class="primary">前往下一關 →</button></section>
+<section id="result" class="result" hidden><span class="eyebrow">冒險紀錄 / QUEST REPORT</span><h1 id="resultTitle"></h1><p id="resultMessage"></p><div class="score-grid" id="scoreGrid"></div><button id="retry" class="primary">重新挑戰 →</button><details id="review"><summary>查看作答紀錄與正解</summary><div id="reviewList"></div></details></section>
+</main><footer>化學魔法森 <span>學測複習 × 萬聖節森林冒險</span></footer>
+<script src="questions.js"></script><script src="game.js"></script>
+
+<script>
+/* 僅監看原遊戲的通關畫面，不更動原遊戲及其既有儲存邏輯。 */
+(()=>{const key='cert_warrior',name='學測勇者之印',status=document.getElementById('adventure-cert-status');let awarded=false;function check(){if(awarded||!(document.getElementById('result') && !document.getElementById('result').hidden && document.getElementById('resultTitle').textContent.includes('五關完成')))return;try{localStorage.setItem(key,'true');awarded=true;status.textContent='✓ 已取得'+name+'！可返回大地圖。'}catch{status.textContent='已通關；瀏覽器未允許儲存憑證，請開啟本機儲存權限。'}}try{if(!localStorage.getItem('adventure_start'))localStorage.setItem('adventure_start',Date.now().toString());if(localStorage.getItem(key))status.textContent='✓ 已持有'+name;}catch{}new MutationObserver(check).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','open'],childList:true,characterData:true});check();})();
+</script>
+</body></html>
